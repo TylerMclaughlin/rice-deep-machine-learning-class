@@ -5,5 +5,6 @@
 #5. Nature Paper 2015, LeCun, Bengio, Hinton
 #6. Machine learning review - Gaussian Mixture Models
 #7. Factor Analysis
-8. IPython/Jupyter
+#8. IPython/Jupyter
 #9. Stealing Google's Coding Practices for Academia
+10. Stanford Numpy Tutorials
