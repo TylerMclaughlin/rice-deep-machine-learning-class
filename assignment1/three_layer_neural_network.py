@@ -78,13 +78,13 @@ class NeuralNetwork(object):
         :return: activations
         '''
         if type == 'tanh':
-            self.actFun_type = 'tanh baby'
+            self.actFun_type = 'tanh'
             activation = np.tanh(z)
         elif type == 'sigmoid':
-            self.actFun_type = 'sigmoid baby'
+            self.actFun_type = 'sigmoid'
             activation = 1. / (1 + np.exp(-z))
         elif type == 'relu':
-            self.actFun_type = 'ReLuuuuuu'
+            self.actFun_type = 'relu'
             return np.maximum(z,0,z)
         else:
             print('%s is not a valid activation type' % (type))
@@ -100,22 +100,23 @@ class NeuralNetwork(object):
         '''
 
         if type == 'tanh':
-            self.actFun_type = 'tanh baby'
-            activation = 1 - np.actFun()
-            activation = 1 - np.tanh(z)**2.
+            self.actFun_type = 'tanh'
+            #activation = 1 - np.actFun(z)**2.
+            deriv = 1 - np.tanh(z)**2.
         elif type == 'sigmoid':
-            self.actFun_type = 'sigmoid baby'
+            self.actFun_type = 'sigmoid'
             sigmoid = 1. / (1 + np.exp(-z))
-            activation = sigmoid * (1 - sigmoid)
+            deriv = sigmoid * (1 - sigmoid)
         elif type == 'relu':
-            self.actFun_type = 'ReLuuuuuu'
-            return np.maximum(0, z)
+            self.actFun_type = 'relu'
+            if z > 0:
+               deriv = 1
+            else:
+                deriv = 0
         else:
             print('%s is not a valid activation type' % (type))
             return None
-        return activation
-
-        return None
+        return deriv
 
     def feedforward(self, X, actFun):
         '''
@@ -125,12 +126,9 @@ class NeuralNetwork(object):
         :param actFun: activation function
         :return:
         '''
-
-        # YOU IMPLEMENT YOUR feedforward HERE
-
-        self.z1 = self.x*self.W1 + self.b1
-        self.a1 = actFun(self.z1)
-        self.z2 = self.a* self.W2 + self.b2
+        self.z1 = X.dot(self.W1) + self.b1
+        self.a1 = self.actFun(self.z1,type = self.actFun_type)
+        self.z2 = self.a1.dot(self.W2) + self.b2
         exp_scores = np.exp(self.z2)
         self.probs = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
         return None
@@ -146,13 +144,25 @@ class NeuralNetwork(object):
         self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
         # Calculating the loss
 
-        # YOU IMPLEMENT YOUR CALCULATION OF THE LOSS HERE
 
-        # data_loss =
+        num_classes = len(np.unique(y))
+
+        one_hot_class = np.zeros((len(y),2))
+        for i in range(0,len(y)):
+            if y[i] == 0:
+                one_hot_class[i,0] = 1
+                one_hot_class[i,1] = 0
+            else:
+                one_hot_class[i,0] = 0
+                one_hot_class[i,1] = 1
+        data_loss = 0.
+        for n in range(0,num_examples):
+            for c in range(0,num_classes):
+                data_loss += one_hot_class[n,c]*np.log(self.probs[n,c])
 
         # Add regularization term to loss (optional)
         data_loss += self.reg_lambda / 2 * (np.sum(np.square(self.W1)) + np.sum(np.square(self.W2)))
-        return (1. / num_examples) * data_loss
+        return (-1. / num_examples) * data_loss
 
     def predict(self, X):
         '''
@@ -179,38 +189,38 @@ class NeuralNetwork(object):
         # db2 = dL/db2
         # dW1 = dL/dW1
         # db1 = dL/db1
-        return dW1, dW2, db1, db2
-
-    def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
-        '''
-        fit_model uses backpropagation to train the network
-        :param X: input data
-        :param y: given labels
-        :param num_passes: the number of times that the algorithm runs through the whole dataset
-        :param print_loss: print the loss or not
-        :return:
-        '''
-        # Gradient descent.
-        for i in range(0, num_passes):
-            # Forward propagation
-            self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
-            # Backpropagation
-            dW1, dW2, db1, db2 = self.backprop(X, y)
-
-            # Add regularization terms (b1 and b2 don't have regularization terms)
-            dW2 += self.reg_lambda * self.W2
-            dW1 += self.reg_lambda * self.W1
-
-            # Gradient descent parameter update
-            self.W1 += -epsilon * dW1
-            self.b1 += -epsilon * db1
-            self.W2 += -epsilon * dW2
-            self.b2 += -epsilon * db2
-
-            # Optionally print the loss.
-            # This is expensive because it uses the whole dataset, so we don't want to do it too often.
-            if print_loss and i % 1000 == 0:
-                print("Loss after iteration %i: %f" % (i, self.calculate_loss(X, y)))
+        #return dW1, dW2, db1, db2
+    #
+    # def fit_model(self, X, y, epsilon=0.01, num_passes=20000, print_loss=True):
+    #     '''
+    #     fit_model uses backpropagation to train the network
+    #     :param X: input data
+    #     :param y: given labels
+    #     :param num_passes: the number of times that the algorithm runs through the whole dataset
+    #     :param print_loss: print the loss or not
+    #     :return:
+    #     '''
+    #     # Gradient descent.
+    #     for i in range(0, num_passes):
+    #         # Forward propagation
+    #         self.feedforward(X, lambda x: self.actFun(x, type=self.actFun_type))
+    #         # Backpropagation
+    #         dW1, dW2, db1, db2 = self.backprop(X, y)
+    #
+    #         # Add regularization terms (b1 and b2 don't have regularization terms)
+    #         dW2 += self.reg_lambda * self.W2
+    #         dW1 += self.reg_lambda * self.W1
+    #
+    #         # Gradient descent parameter update
+    #         self.W1 += -epsilon * dW1
+    #         self.b1 += -epsilon * db1
+    #         self.W2 += -epsilon * dW2
+    #         self.b2 += -epsilon * db2
+    #
+    #         # Optionally print the loss.
+    #         # This is expensive because it uses the whole dataset, so we don't want to do it too often.
+    #         if print_loss and i % 1000 == 0:
+    #             print("Loss after iteration %i: %f" % (i, self.calculate_loss(X, y)))
 
     def visualize_decision_boundary(self, X, y):
         '''
@@ -229,11 +239,11 @@ def main():
       # X, y = generate_data()
       # plt.scatter(X[:, 0], X[:, 1], s=40, c=y, cmap=plt.cm.Spectral)
       # plt.show()
-      print('asdfasdf')
 
-      # model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='tanh')
+      model = NeuralNetwork(nn_input_dim=2, nn_hidden_dim=3 , nn_output_dim=2, actFun_type='tanh')
+
       # model.fit_model(X,y)
-      # model.visualize_decision_boundary(X,y)
+      model.visualize_decision_boundary(X,y)
 
 if __name__ == "__main__":
     main()
