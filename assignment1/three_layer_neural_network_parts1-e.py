@@ -13,33 +13,8 @@ def generate_data():
     X, y = datasets.make_moons(200, noise=0.20)
     return X, y
 
-def generate_data_wine():
-    '''
-    generate data
-    :return: X: input data, y: given labels
-    '''
-    X, y = datasets.load_wine(return_X_y=True)
-    return X, y
 
-def generate_data_bc():
-    '''
-    generate data
-    :return: X: input data, y: given labels
-    '''
-    X, y = datasets.load_breast_cancer(return_X_y=True)
-    return X, y
-
-def generate_data_blobs(n_samples = 200, centers =4):
-    '''
-    generate data
-    :return: X: input data, y: given labels
-    '''
-    np.random.seed(0)
-    X, y = datasets.make_blobs(n_samples = n_samples, centers=centers)
-    return X, y
-
-
-def plot_decision_boundary(pred_func, X, y):#, n_hidden_nodes, activation_type):
+def plot_decision_boundary(pred_func, X, y, n_hidden_nodes, activation_type):
     '''
     plot the decision boundary
     :param pred_func: function used to predict the label
@@ -59,8 +34,8 @@ def plot_decision_boundary(pred_func, X, y):#, n_hidden_nodes, activation_type):
     # Plot the contour and training examples
     plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
     plt.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.Spectral)
-    #title_string = '%s Nodes in Hidden Layer; %s Activation' % (n_hidden_nodes,activation_type)
-    #plt.title(title_string)
+    title_string = '%s Nodes in Hidden Layer; %s Activation' % (n_hidden_nodes,activation_type)
+    plt.title(title_string)
     plt.show()
 
 
@@ -268,17 +243,7 @@ class NeuralNetwork(object):
         :param y: given labels
         :return:
         '''
-        plot_decision_boundary(lambda x: self.predict(x), X, y)#self.nn_hidden_dim,self.actFun_type.title())
-
-
-    def visualize_decision_boundary_v2(self, X, y):
-        '''
-        visualize_decision_boundary plots the decision boundary created by the trained network
-        :param X: input data
-        :param y: given labels
-        :return:
-        '''
-        plot_decision_boundary(lambda x: self.predict(x[:,0]), X[0], y)#self.nn_hidden_dim,self.actFun_type.title())
+        plot_decision_boundary(lambda x: self.predict(x), X, y,self.nn_hidden_dim,self.actFun_type.title())
 
 
 def main():
