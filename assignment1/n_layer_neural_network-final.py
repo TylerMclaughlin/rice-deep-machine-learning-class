@@ -273,11 +273,13 @@ def main():
   #layer_sizes = [X.shape[1], 3, 3, 3, 3]
 
   # brilliant for make moons!
-  #layer_sizes = [X.shape[1], 6, 6]
+  layer_sizes = [X.shape[1], 6, 6]
+  #layer_sizes = [X.shape[1], 3, 3]
   #layer_sizes = [X.shape[1], 10, 8, 6, 4, 3]
+  #layer_sizes = [X.shape[1], 3, 4, 6, 8, 10]
 
   # try for wines
-  layer_sizes = [X.shape[1],6,6]# 16, 16]
+  #layer_sizes = [X.shape[1],6,6]# 16, 16]
 
   #layer_sizes = [X.shape[1], 2, 4, 10, 4, 3]
   #layer_sizes = [X.shape[1], 3]
